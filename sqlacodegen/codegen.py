@@ -337,7 +337,7 @@ class ModelClass(Model):
 
     @staticmethod
     def _tablename_to_classname(tablename, inflect_engine):
-        camel_case_name = ''.join(part[:1].upper() + part[1:] for part in tablename.split('_'))
+        camel_case_name = ''.join(part[:1].upper() + part[1:].lower() for part in tablename.split('_'))
         return inflect_engine.singular_noun(camel_case_name) or camel_case_name
 
     def _add_attribute(self, attrname, value):
@@ -395,7 +395,7 @@ class ModelClass(Model):
         for attr, column in self.attributes.items():
             if isinstance(column, Column):
                 show_name = attr != column.name
-                text += '    {0} = {1}\n'.format(attr, _render_column(column, show_name))
+                text += '    {0} = {1}\n'.format(attr.lower(), _render_column(column, show_name))
 
         # Render relationships
         if any(isinstance(value, Relationship) for value in self.attributes.values()):
