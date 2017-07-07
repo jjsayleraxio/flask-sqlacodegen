@@ -402,7 +402,7 @@ class ModelClass(Model):
             text += '\n'
         for attr, relationship in self.attributes.items():
             if isinstance(relationship, Relationship):
-                text += '    {0} = {1}\n'.format(attr, relationship.render())
+                text += '    {0} = {1}\n'.format(attr.lower(), relationship.render())
 
         # Render subclasses
         for child_class in self.children:
