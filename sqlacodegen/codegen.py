@@ -313,7 +313,7 @@ class ModelClass(Model):
 
         # Assign attribute names for columns
         for column in table.columns:
-            self._add_attribute(column.name, column)
+            self._add_attribute(column.name.lower(), column)
 
         # Add many-to-one relationships
         pk_column_names = set(col.name for col in table.primary_key.columns)
@@ -395,14 +395,14 @@ class ModelClass(Model):
         for attr, column in self.attributes.items():
             if isinstance(column, Column):
                 show_name = attr != column.name
-                text += '    {0} = {1}\n'.format(attr.lower(), _render_column(column, show_name))
+                text += '    {0} = {1}\n'.format(attr, _render_column(column, show_name))
 
         # Render relationships
         if any(isinstance(value, Relationship) for value in self.attributes.values()):
             text += '\n'
         for attr, relationship in self.attributes.items():
             if isinstance(relationship, Relationship):
-                text += '    {0} = {1}\n'.format(attr.lower(), relationship.render())
+                text += '    {0} = {1}\n'.format(attr, relationship.render())
 
         # Render subclasses
         for child_class in self.children:
@@ -487,11 +487,11 @@ class ManyToOneRelationship(Relationship):
         # if len(common_fk_constraints) > 1:
         # self.kwargs['primaryjoin'] = "'{0}.{1} == {2}.{3}'".format(source_cls, constraint.columns[0], target_cls, constraint.elements[0].column.name)
         if len(constraint.elements) > 1:  #  or 
-            self.kwargs['primaryjoin'] = "'and_({0})'".format(', '.join(['{0}.{1} == {2}.{3}'.format(source_cls, k.parent.name, target_cls, k.column.name)
+            self.kwargs['primaryjoin'] = "'and_({0})'".format(', '.join(['{0}.{1} == {2}.{3}'.format(source_cls, k.parent.name.lower(), target_cls, k.column.name.lower())
                         for k in constraint.elements]))
         else:
-            self.kwargs['primaryjoin'] = "'{0}.{1} == {2}.{3}'".format(source_cls, column_names[0], target_cls,
-                                                                       constraint.elements[0].column.name)
+            self.kwargs['primaryjoin'] = "'{0}.{1} == {2}.{3}'".format(source_cls, column_names[0].lower(), target_cls,
+                                                                       constraint.elements[0].column.name.lower())
 
 
 class ManyToManyRelationship(Relationship):
